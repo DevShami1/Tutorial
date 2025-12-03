@@ -31,6 +31,10 @@ app.get('/health', (req, res) => {
     })
 })
 
+app.get('/fuck' , (req , res) => {
+    res.send('Fuck you')
+})
+
 // 404 handler - must be last
 app.use((req, res) => {
     res.status(404).json({

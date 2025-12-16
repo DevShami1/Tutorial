@@ -46,7 +46,7 @@ const userController = {
             const account = req.body
             const user = await User.findByEmail(account.email)
             if(user) {
-                return res.status(500).json({
+                return res.json({
                     success: false,
                     message: 'User has already exists'
                 })

@@ -56,7 +56,7 @@ const orderController = {
         try {
             const deleted = await Order.delete(req.params.id)
             if (!deleted) {
-            return res.status(404).json({
+            return resjson({
                 success: false,
                 message: 'Order not found'
             });

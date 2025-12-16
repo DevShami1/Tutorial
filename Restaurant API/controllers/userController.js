@@ -22,9 +22,9 @@ const userController = {
         try {
             const user = await User.findByEmailAndPassword(req.query.email , req.query.password)
             if(!user) {
-                return res.status(404).json({
+                return res.json({
                     success: false,
-                    message: 'User NOT found'
+                    message: 'Email or Password is incorrect'
                 })
             }
             res.json({
@@ -70,7 +70,7 @@ const userController = {
         try {
             const deleted = await User.delete(req.params.id);
             if (!deleted) {
-            return res.status(404).json({
+            return res.json({
                 success: false,
                 message: 'User not found'
             });

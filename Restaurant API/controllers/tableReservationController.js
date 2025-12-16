@@ -56,7 +56,7 @@ const tableReservationController = {
         try {
             const deleted = await TableReservation.delete(req.params.id)
             if (!deleted) {
-            return res.status(404).json({
+            return resjson({
                 success: false,
                 message: 'Table not found'
             });

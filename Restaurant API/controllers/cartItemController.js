@@ -56,7 +56,7 @@ const cartItemController = {
         try {
             const deleted = await CartItem.delete(req.params.id)
             if (!deleted) {
-            return res.status(404).json({
+            return resjson({
                 success: false,
                 message: 'CartItem not found'
             });

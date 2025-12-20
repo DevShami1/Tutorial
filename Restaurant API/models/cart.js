@@ -16,8 +16,8 @@ class Cart {
             const pool = await getPool()
             const result = await pool.request()
             .input('userID' , sql.Int , userID)
-            .query('SELECT * FROM Carts WHERE userID = @userID ORDER BY dateCreated DESC')
-            return result.recordset
+            .query('SELECT TOP 1 * FROM Carts WHERE userID = @userID ORDER BY dateCreated DESC')
+            return result.recordset[0]
         } catch (error) {
             throw error
         }

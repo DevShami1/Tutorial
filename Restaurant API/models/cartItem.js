@@ -23,22 +23,38 @@ class CartItem {
         }
     }
 
-    static async create(cartItem) {
+    static async create(cartItems) {
+        const pool = await getPool()
+        const transaction = new sql.Transaction(pool)
         try {
-            const {cartID , menuItemID , quantity} = cartItem
-            const pool = await getPool()
-            const result = await pool.request()
-            .input('cartID' , sql.Int , cartID)
-            .input('menuItemID' , sql.Int , menuItemID)
-            .input('quantity' , sql.Int , quantity)
-            .query(`
-                INSERT INTO CartItems (cartID, menuItemID, quantity)
-                VALUES (@cartID, @menuItemID, @quantity);
+            await transaction.begin()
+            const insertedItems = []
 
-                SELECT * FROM CartItems WHERE id = SCOPE_IDENTITY();
-            `)
-            return result.recordset[0]  // first row from the SELECT
+            for (const item of cartItems) {
+                const { cartID, menuItemID, quantity } = item
+                const request = new sql.Request(transaction)
+                const result = await request
+                    .input('cartID', sql.Int, cartID)
+                    .input('menuItemID', sql.Int, menuItemID)
+                    .input('quantity', sql.Int, quantity)
+                    .query(`
+                        INSERT INTO CartItems (cartID, menuItemID, quantity)
+                        VALUES (@cartID, @menuItemID, @quantity);
+
+                        SELECT * FROM CartItems WHERE id = SCOPE_IDENTITY();
+                    `)
+                insertedItems.push(result.recordset[0])
+            }
+
+            await transaction.commit()
+            return insertedItems
         } catch (error) {
+            // Only rollback if the transaction was actually active
+            try {
+                await transaction.rollback()
+            } catch (rollbackError) {
+                // Ignore rollback error if it fails (e.g., transaction wasn't active)
+            }
             throw error
         }
     }

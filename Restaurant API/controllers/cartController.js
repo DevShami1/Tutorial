@@ -20,11 +20,11 @@ const cartController = {
 
     getAllCartsByUserID: async (req , res) => {
         try {
-            const carts = await Cart.findByUserID(req.params.userID)
+            const cart = await Cart.findByUserID(req.params.userID)
             res.json({
                 success: true,
-                data: carts,
-                message: 'Carts retrieved successfully'
+                data: cart,
+                message: 'Cart retrieved successfully'
             })
         } catch (error) {
             res.status(500).json({

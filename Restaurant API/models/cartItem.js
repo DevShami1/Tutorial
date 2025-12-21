@@ -23,7 +23,8 @@ class CartItem {
         }
     }
 
-    static async create(cartItems) {
+    static async create(body) {
+        const cartItems = body['cartItems']
         const pool = await getPool()
         const transaction = new sql.Transaction(pool)
         try {
@@ -38,10 +39,8 @@ class CartItem {
                     .input('menuItemID', sql.Int, menuItemID)
                     .input('quantity', sql.Int, quantity)
                     .query(`
-                        INSERT INTO CartItems (cartID, menuItemID, quantity)
+                        INSERT INTO CartItems (cartID, menuItemID, quantity) OUTPUT INSERTED.*
                         VALUES (@cartID, @menuItemID, @quantity);
-
-                        SELECT * FROM CartItems WHERE id = SCOPE_IDENTITY();
                     `)
                 insertedItems.push(result.recordset[0])
             }
